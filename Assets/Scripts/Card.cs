@@ -57,6 +57,7 @@ public class Card : MonoBehaviour
     }
     void WaitingSunUpdate()
     {
+        if (SunManager.Instance == null) return;
         if(needSunPoint<=SunManager.Instance.SunPoint)
         {
             transitionToReady();
@@ -64,6 +65,7 @@ public class Card : MonoBehaviour
     }
     void ReadyUpdate()
     {
+        if (SunManager.Instance == null) return;
         if(needSunPoint>SunManager.Instance.SunPoint)
         {
             transitionToWaitingSun();
@@ -93,11 +95,18 @@ public class Card : MonoBehaviour
     }
     public void OnClick()
     {
+        if (SunManager.Instance == null) return;
         if (needSunPoint > SunManager.Instance.SunPoint) return;
-        //TODO:进行种植
-        HandManager.Instance.AddPlant(plantType);
-        SunManager.Instance.SubSun(needSunPoint);
-        transitionToCooling();
+        
+
+        if (HandManager.Instance == null) return;
+        bool isSuccess = HandManager.Instance.AddPlant(plantType);
+        if(isSuccess )
+        {
+            SunManager.Instance.SubSun(needSunPoint);
+            transitionToCooling();
+        }
+        
 
     }
 }
