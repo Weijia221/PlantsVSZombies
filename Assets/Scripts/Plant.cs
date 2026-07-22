@@ -5,7 +5,8 @@ using UnityEngine;
 enum PlantState
 {
     Enable,
-    Disable
+    Disable,
+    Pause
 }
 public class Plant : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class Plant : MonoBehaviour
                 break;
             case PlantState.Disable:
                 DisableUpdate();
+                break;
+            case PlantState.Pause:
                 break;
             default:
                 break;
@@ -49,6 +52,11 @@ public class Plant : MonoBehaviour
         plantState = PlantState.Enable;
         GetComponent<Animator>().enabled = true;
         GetComponent<Collider2D>().enabled = true;
+    }
+    public void TransitionToPause()
+    {
+        plantState = PlantState.Pause;
+        GetComponent<Animator>().enabled = false;
     }
     public void TakeDamage(int  damage)
     {

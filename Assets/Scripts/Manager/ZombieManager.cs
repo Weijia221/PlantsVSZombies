@@ -14,18 +14,35 @@ public class ZombieManager : MonoBehaviour
     private SpawnState spawnState=SpawnState.NotStart;
     public Transform[] spawnPointList;
     public GameObject zombiePrefab;
+    private List<Zombie> zombieList = new List<Zombie>();
     private void Awake()
     {
         Instance = this;
     }
     private void Start()
     {
-        StartSpawn();
+        //StartSpawn();
+    }
+    private void Update()
+    {
+        if(spawnState == SpawnState.End && zombieList.Count == 0)
+        {
+            GameManager.Instance.GameEndSuccess();
+        }
+
     }
     public void StartSpawn()
     {
         spawnState = SpawnState.Spawning;
         StartCoroutine(SpawnZombie());
+    }
+    public void Pause()
+    {
+        spawnState = SpawnState.End;
+        foreach(Zombie zombie in zombieList)
+        {
+            zombie.TransitionToPause();
+        }
     }
     IEnumerator SpawnZombie()
     {
@@ -44,15 +61,27 @@ public class ZombieManager : MonoBehaviour
         }
         yield return new WaitForSeconds(1);
         //第三波 10
+        AudioManager.Instance.PlayClip(Config.lastwave);
         for (int i = 0; i < 10; i++)
         {
             SpawnARandomZombie();
             yield return new WaitForSeconds(3);
         }
+        spawnState = SpawnState.End;
     }
     private void SpawnARandomZombie()
     {
-        int index = Random.Range(0, spawnPointList.Length);
-        GameObject.Instantiate(zombiePrefab, spawnPointList[index].position, Quaternion.identity);
+        if(spawnState == SpawnState.Spawning)
+        {
+            int index = Random.Range(0, spawnPointList.Length);
+            GameObject go = GameObject.Instantiate(zombiePrefab, spawnPointList[index].position, Quaternion.identity);
+            zombieList.Add(go.GetComponent<Zombie>());
+            go.GetComponent<SpriteRenderer>().sortingOrder= spawnPointList[index].GetComponent<SpriteRenderer>().sortingOrder;
+        }
+        
+    }
+    public void RemoveZimbie(Zombie zombie)
+    {
+        zombieList.Remove(zombie);
     }
 }

@@ -50,6 +50,7 @@ public class HandManager : MonoBehaviour
         if(isSuccess)
         {
             currentPlant=null;
+            AudioManager.Instance.PlayClip(Config.palnt);
         }
     }
 }

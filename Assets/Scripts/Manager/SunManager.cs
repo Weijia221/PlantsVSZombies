@@ -14,7 +14,6 @@ public class SunManager : MonoBehaviour
         get { return sunPoint; }
     }
     public TextMeshProUGUI sunPointText;
-    private Vector3 sunPointTextPosition;
     public float produceTime;
     private float produceTimer;
     public GameObject sunPrefab;
@@ -26,8 +25,7 @@ public class SunManager : MonoBehaviour
     private void Start()
     {
         UpdateSunPointText();
-        CalcSunPointTextPosition();
-        StartProduc();
+        //StartProduce();
     }
     private void Update()
     {
@@ -36,10 +34,15 @@ public class SunManager : MonoBehaviour
             ProduceSun();
         }
     }
-    public void StartProduc()
+    public void StartProduce()
     {
         isStartProduce = true;
     }
+    public void StopProdeuce()
+    {
+        isStartProduce= false;
+    }
+
     private void UpdateSunPointText()
     {
         sunPointText.text=SunPoint.ToString();
@@ -56,13 +59,11 @@ public class SunManager : MonoBehaviour
     }
     public Vector3 GetSunPointTextPosition()
     {
-        return sunPointTextPosition;
-    }
-    private void CalcSunPointTextPosition()
-    {
-        Vector3 position = Camera.main.ScreenToWorldPoint(sunPointText.transform.position);
-        position.z = 0;
-        sunPointTextPosition= position;
+        Vector3 screenPos = sunPointText.transform.position;
+        screenPos.z = -Camera.main.transform.position.z;
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
+        worldPos.z = 0;
+        return worldPos;
     }
     void ProduceSun()
     {

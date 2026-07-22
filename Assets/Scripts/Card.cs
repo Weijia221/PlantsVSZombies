@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 enum CardState
 {
+    Disable,
     Cooling,
     WaitingSun,
     Ready
@@ -19,7 +20,7 @@ public enum PlantType
 public class Card : MonoBehaviour
 {
     //冷却 可以被点击 不可用
-    private CardState cardState = CardState.Cooling;
+    private CardState cardState = CardState.Disable;
     public PlantType plantType= PlantType.Sunflower;
     public GameObject cardLight;
     public GameObject cardGray;
@@ -95,6 +96,8 @@ public class Card : MonoBehaviour
     }
     public void OnClick()
     {
+        AudioManager.Instance.PlayClip(Config.btn_click);
+        if (cardState == CardState.Disable) return;
         if (SunManager.Instance == null) return;
         if (needSunPoint > SunManager.Instance.SunPoint) return;
         
@@ -109,4 +112,13 @@ public class Card : MonoBehaviour
         
 
     }
+    public void DisableCard()
+    {
+        cardState = CardState.Disable;
+    }
+    public void EnableCard()
+    {
+        transitionToCooling();
+    }
+
 }
